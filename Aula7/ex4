@@ -1,0 +1,16 @@
+lista = []
+somaElePares = 0
+somaEleIndPares = 0
+
+for i in range(10):
+    nro = int(input("Digite um numero: "))
+    lista.append(nro)
+
+for i in range(len(lista)):
+    #descobrindo se o elemento é par
+    if lista[i] % 2 == 0:
+        somaElePares = somaElePares + lista[i]
+    
+    #descobrindo se o indice do elemento é par
+    if i % 2 == 0:
+        somaEleIndPares = somaEleIndPares + lista[i]
