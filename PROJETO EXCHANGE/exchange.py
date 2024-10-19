@@ -59,11 +59,47 @@ def cadastro(): #função para realizar o cadastro
                     
 
 def login():
-    print("login")
+    while True:
+        userlogin = input("\nInsira seu CPF associado a uma conta: ")
+        if userlogin in cadastros:
+            while True:
+             usersenha = input("\nInsira a sua senha: ")
+             if usersenha == (cadastros[userlogin][1]):
+                 global usuariologado 
+                 usuariologado = (cadastros[userlogin][0])
+                 return(True)
+                 break
+             else:
+                 print("\nSenha incorreta!")
+        else:
+            print("\nCPF não cadastrado!")
+
+def consultaSaldo():
+    print()
+
+def consultaExtrato():
+    print()
+    
+def saque():
+    print()
+    
+def comprarCripto():
+    print()
+    
+def venderCripto():
+    print()
+    
+def atualizarCota():
+    print()
+    
+def deposito():
+    print()
 
 
 #----------------------LISTAS------------------------------------------------------------------------------------------------------------------------------------------------
-cadastros = {}
+cadastros = {
+    '53406698824':('kaique','12345')
+    }
 
 
 #----------------------MAIN-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -75,15 +111,36 @@ while True:
     resultado = acao() 
     if resultado == 1:
         cadastro()
-        print(cadastros)
-        print(len(cadastros))
         
         
 
     elif resultado == 2:
-        login()
-        break
+        if login() == True:
+            break
 
     else:
         print("\nAção não reconhecida, porfavor insira uma ação correspondente da lista abaixo:\n") #digitar um número que não aparece no menu apenas voltará ao inicio do bloco.
 
+
+print("\nOlá %s seja bem vindo(a) a CryptoSpy!\nO que deseja fazer em seguida?" %usuariologado)
+while True:
+    print("\n1. Consultar saldo\n2. Consultar Extrato\n3. Depositar\n4. Sacar\n5. Comprar criptomoedas\n6. Vender criptomoedas\n7. Atualizar Cotação\n8. Sair\n")
+    resultado = acao() 
+    if resultado == 1:
+        consultaSaldo()
+    elif resultado == 2:
+        consultaExtrato()
+    elif resultado == 3:
+        deposito()
+    elif resultado == 4:
+        saque()
+    elif resultado == 5:
+        comprarCripto()
+    elif resultado == 6:
+        venderCripto()
+    elif resultado == 7:
+        atualizarCota()
+    elif resultado == 8:
+        break
+    else:
+        print("\nAção não reconhecida, porfavor insira uma ação correspondente da lista abaixo:")
