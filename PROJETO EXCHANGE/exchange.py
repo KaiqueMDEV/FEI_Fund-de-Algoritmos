@@ -1,3 +1,7 @@
+#------------------------------BIBLIOTECAS-------------------------------------------------
+from datetime import datetime
+
+
 #--------------------------FUNÇÕES----------------------------------------------------------
 
 def acao(): #função que receberá um número do usuário, usado como condição para acessar menus.
@@ -44,18 +48,22 @@ def cadastro(): #função para realizar o cadastro
             break
 
     while True:
-        senha = input("\nDigite sua senha: ")
-        if senha == "":
-            print("\nInsira uma senha válida.")
-
+        try:
+            senha = int(input("\nDigite sua senha: "))
+        except ValueError:
+            print("\nPorfavor, insira apenas números.")
         else:
-            senha2 = input("\nCONFIRME sua senha:") #confirmação da senha digitada anteriormente pelo usuário, bem comum na criação de contas, porém não é 100% necessário
-            if senha2 != senha:
-                print("\nAs senhas não coincidem!")
+            if senha > 999999 or senha < 100000:
+                print("\nInsira uma senha válida.")
 
-            else:                
-                cadastros[str(cpf)] = str(nome), str(senha),int(0) #ao final da função, todas as informações são adicionadas a um dicionario, em uma chave 
-                break                                       #relativa ao cpf digitado pelo usuário
+            else:
+                senha2 = int(input("\nCONFIRME sua senha: ")) #confirmação da senha digitada anteriormente pelo usuário, bem comum na criação de contas, porém não é 100% necessário
+                if senha2 != senha:
+                    print("\nAs senhas não coincidem!")
+
+                else:                
+                    cadastros[str(cpf)] = str(nome), str(senha), float(0), [], float(0), float(0), float(0) #ao final da função, todas as informações são adicionadas a um dicionario, em uma chave 
+                    break                                       #relativa ao cpf digitado pelo usuário
                     
 
 def login():
@@ -71,6 +79,12 @@ def login():
                  usuariologado = (cadastros[userlogin][0])
                  global saldousuario
                  saldousuario = (cadastros[userlogin][2])
+                 global bitcoinusuario
+                 bitcoinusuario = (cadastros[userlogin][4])
+                 global etherumusuario
+                 etherumusuario = (cadastros[userlogin][5])
+                 global rippleusuario
+                 rippleusuario = (cadastros[userlogin][6])
                  global usuariosenha
                  return(True)
                  break
@@ -88,18 +102,23 @@ def verificaSenha(): #essa função será usada para quase toda operação no ME
 
 def consultaSaldo():
     if verificaSenha() == True:
-        print("\nSaldo R$: %.2f" %saldousuario)
+        print("\nBRL: %.2f" %saldousuario)
+        print("\nBTC: %.2f" %bitcoinusuario)
+        print("\nETH: %.2f" %etherumusuario)
+        print("\nXRP: %.2f" %rippleusuario)
     else:
         print("\nSenha inválida!")
 
 def consultaExtrato():
-    print()
-    
+    print("\nNome: " + usuariologado + "\nCPF: " + userlogin + "\n")
+    print(*cadastros[userlogin][3], sep='\n')
+
+
 def saque():
     global saldousuario
     if verificaSenha() == True:
         try:
-            sacado = float (input("\nQuanto deseja sacar?: "))
+            sacado = float (input("\nQuanto deseja sacar?: R$"))
         except ValueError:
             print("\nEntrada inválida.")
         else:
@@ -107,6 +126,11 @@ def saque():
                 saldousuario = saldousuario - sacado #atribui o novo saldo ao usuario, subtraindo o valor do saque
                 print("\nValor do saque: R$%.2f" %sacado)
                 print("Novo saldo: R$%.2f" %saldousuario)
+                data_hora_atual = datetime.now()
+                data_hora_formatada = data_hora_atual.strftime("%d/%m/%Y %H:%M:%S")
+                extrato = (str(data_hora_formatada) + ' - ' + str(sacado) + " BRL")
+                cadastros[userlogin][3].append(extrato)
+                cadastros[userlogin] = (cadastros[userlogin][0], cadastros[userlogin][1], saldousuario, cadastros[userlogin][3], bitcoinusuario, etherumusuario, rippleusuario)
             else:
                 print("\nTransação inválida! Saldo insuficiente.")
     else:
@@ -125,20 +149,27 @@ def deposito():
     global saldousuario
     if verificaSenha() == True:
         try:
-            depositado = float (input("\nQuanto deseja depositar?: "))
+            depositado = float (input("\nQuanto deseja depositar?: R$"))
         except ValueError:
             print("Entrada inválida.")
         else:
             saldousuario = saldousuario + depositado
             print("\nValor depositado: R$%.2f" %depositado)
             print("Novo saldo: R$%.2f" %saldousuario)
+            data_hora_atual = datetime.now()
+            data_hora_formatada = data_hora_atual.strftime("%d/%m/%Y %H:%M:%S")
+            extrato = (str(data_hora_formatada) + ' + ' + str(depositado) + " BRL")
+            cadastros[userlogin][3].append(extrato)
+            cadastros[userlogin] = (cadastros[userlogin][0], cadastros[userlogin][1], saldousuario, cadastros[userlogin][3], bitcoinusuario, etherumusuario, rippleusuario)
+
+
     else:
         print("\nSenha incorreta!")
 
 
 #----------------------LISTAS------------------------------------------------------------------------------------------------------------------------------------------------
 cadastros = {
-    '53406698824':('kaique','12345',200)
+    '53406698824':('kaique','123456',200,[],1,1,1)
     }
 
 
@@ -147,40 +178,45 @@ cadastros = {
 print("\nBem vindo a CryptoSpy! \nPorfavor, Cadastre-se caso seja novo ou faça Login caso ja possua uma conta")
 
 while True:
-    print("\n1. Cadastro \n2. Login\n") #opções disponíveis para entrada do usuário
-    resultado = acao() 
-    if resultado == 1:
-        cadastro()
-        
-        
-
-    elif resultado == 2:
-        if login() == True:
+    while True:
+        print("\n1. Cadastro \n2. Login \n3. Sair \n") #opções disponíveis para entrada do usuário
+        resultado = acao() 
+    
+        if resultado == 1:
+            cadastro()
+            
+            
+    
+        elif resultado == 2:
+            if login() == True:
+                break
+    
+        elif resultado == 3:
+            exit()
+    
+        else:
+            print("\nAção não reconhecida, porfavor insira uma ação correspondente da lista abaixo:\n") #digitar um número que não aparece no menu apenas voltará ao inicio do bloco.
+    
+    
+    print("\nOlá %s seja bem vindo(a) a CryptoSpy!\nO que deseja fazer em seguida?" %usuariologado)
+    while True:
+        print("\n1. Consultar saldo\n2. Consultar Extrato\n3. Depositar\n4. Sacar\n5. Comprar criptomoedas\n6. Vender criptomoedas\n7. Atualizar Cotação\n8. Sair\n")
+        resultado = acao() 
+        if resultado == 1:
+            consultaSaldo()
+        elif resultado == 2:
+            consultaExtrato()
+        elif resultado == 3:
+            deposito()
+        elif resultado == 4:
+            saque()
+        elif resultado == 5:
+            comprarCripto()
+        elif resultado == 6:
+            venderCripto()
+        elif resultado == 7:
+            atualizarCota()
+        elif resultado == 8:
             break
-
-    else:
-        print("\nAção não reconhecida, porfavor insira uma ação correspondente da lista abaixo:\n") #digitar um número que não aparece no menu apenas voltará ao inicio do bloco.
-
-
-print("\nOlá %s seja bem vindo(a) a CryptoSpy!\nO que deseja fazer em seguida?" %usuariologado)
-while True:
-    print("\n1. Consultar saldo\n2. Consultar Extrato\n3. Depositar\n4. Sacar\n5. Comprar criptomoedas\n6. Vender criptomoedas\n7. Atualizar Cotação\n8. Sair\n")
-    resultado = acao() 
-    if resultado == 1:
-        consultaSaldo()
-    elif resultado == 2:
-        consultaExtrato()
-    elif resultado == 3:
-        deposito()
-    elif resultado == 4:
-        saque()
-    elif resultado == 5:
-        comprarCripto()
-    elif resultado == 6:
-        venderCripto()
-    elif resultado == 7:
-        atualizarCota()
-    elif resultado == 8:
-        break
-    else:
-        print("\nAção não reconhecida, porfavor insira uma ação correspondente da lista abaixo:")
+        else:
+            print("\nAção não reconhecida, porfavor insira uma ação correspondente da lista abaixo:")
