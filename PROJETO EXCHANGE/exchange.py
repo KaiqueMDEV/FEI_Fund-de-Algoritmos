@@ -1,6 +1,6 @@
 #------------------------------BIBLIOTECAS-------------------------------------------------
 from datetime import datetime
-
+import random   
 
 #--------------------------FUNÇÕES----------------------------------------------------------
 
@@ -103,9 +103,9 @@ def verificaSenha(): #essa função será usada para quase toda operação no ME
 def consultaSaldo():
     if verificaSenha() == True:
         print("\nBRL: %.2f" %saldousuario)
-        print("\nBTC: %.2f" %bitcoinusuario)
-        print("\nETH: %.2f" %etherumusuario)
-        print("\nXRP: %.2f" %rippleusuario)
+        print("\nBTC: %.8f" %bitcoinusuario)
+        print("\nETH: %.8f" %etherumusuario)
+        print("\nXRP: %.3f" %rippleusuario)
     else:
         print("\nSenha inválida!")
 
@@ -137,13 +137,112 @@ def saque():
         print("\nSenha incorreta!")
     
 def comprarCripto():
-    print()
+    print("\nCotação Atual: \n", btc_price, "\n", eth_price, "\n", xrp_price, "\nDeseja Continuar?")
+    while True:
+        print("\n1. Sim \n2. Não\n")
+        resultado = acao()
+        if resultado == 1:
+            global saldousuario
+            print("\nQual moeda deseja comprar? \n1. Bitcoin \n2. Ethereum \n3. Ripple\n")
+            resultado = acao()
+            if resultado == 1:
+                global bitcoinusuario
+                valor = float(input("\nQuanto deseja comprar? (em R$): \n"))
+                valortaxado = valor + ((valor / 100)*2)
+                if valortaxado <= saldousuario:
+                    saldousuario = saldousuario - valortaxado
+                    bitcoinusuario = bitcoinusuario + (valor / btc_price)
+                    break
+                else:
+                    print("\nSaldo Insuficiente.")
+            elif resultado ==2:
+                global etherumusuario
+                valor = float(input("\nQuanto deseja comprar? (em R$): \n"))
+                valortaxado = valor + ((valor / 100)*1)
+                if valortaxado <= saldousuario:
+                    saldousuario = saldousuario - valortaxado
+                    etherumusuario = etherumusuario + (valor / eth_price)
+                    break
+                else:
+                    print("Saldo Insuficiente.")
+            elif resultado ==3:
+                global rippleusuario
+                valor = float(input("\nQuanto deseja comprar? (em R$): \n"))
+                valortaxado = valor + ((valor / 100)*1)
+                if valortaxado <= saldousuario:
+                    saldousuario = saldousuario - valortaxado
+                    rippleusuario = rippleusuario + (valor / xrp_price)
+                    break
+                else:
+                    print("\nSaldo Insuficiente.")
+            elif resultado ==4:
+                break
+        elif resultado == 2:
+            break
+        else:
+            ("\nOpção Inválida")
+    
     
 def venderCripto():
-    print()
+    print("\nCotação Atual: \n", btc_price, "\n", eth_price, "\n", xrp_price, "\nDeseja Continuar?")
+    while True:
+        print("\n1. Sim \n2. Não\n")
+        resultado = acao()
+        if resultado == 1:
+            global saldousuario
+            print("\nQual moeda deseja vender? \n1. Bitcoin \n2. Ethereum \n3. Ripple\n")
+            resultado = acao()
+            if resultado == 1:
+                global bitcoinusuario
+                valor = float(input("\nQuanto deseja vender? (em BTC): \n"))
+                if valor <= bitcoinusuario:
+                    valortaxado = valor - (((valor * btc_price) / 100) * 3) 
+                    bitcoinusuario = bitcoinusuario - valor
+                    saldousuario = valortaxado
+                    break
+                else:
+                    print("\nSaldo Insuficiente.")
+            elif resultado ==2:
+                global etherumusuario
+                valor = float(input("\nQuanto deseja vender? (em BTC): \n"))
+                if valor <= bitcoinusuario:
+                    valortaxado = valor - (((valor * btc_price) / 100) * 3) 
+                    etherumusuario = bitcoinusuario - valor
+                    saldousuario = valortaxado
+                else:
+                    print("Saldo Insuficiente.")
+            elif resultado ==3:
+                global rippleusuario
+                valor = float(input("\nQuanto deseja comprar? (em R$): \n"))
+                valortaxado = valor + ((valor / 100)*1)
+                if valortaxado <= saldousuario:
+                    saldousuario = saldousuario - valortaxado
+                    rippleusuario = rippleusuario + (valor / xrp_price)
+                    break
+                else:
+                    print("\nSaldo Insuficiente.")
+            elif resultado ==4:
+                break
+        elif resultado == 2:
+            break
+        else:
+            ("\nOpção Inválida")
     
 def atualizarCota():
-    print()
+    dice = random.randint(0,1)
+    global btc_price
+    global eth_price
+    global xrp_price
+    if dice == 0:
+        btc_price = btc_price + ((btc_price / 100) * 5)
+        eth_price = eth_price + ((eth_price / 100) * 5)
+        xrp_price = xrp_price + ((xrp_price / 100) * 5)
+        print("\nCotação Atual: \n", btc_price, "\n", eth_price, "\n", xrp_price)
+    else:
+        btc_price = btc_price - ((btc_price / 100) * 5)
+        eth_price = eth_price - ((eth_price / 100) * 5)
+        xrp_price = xrp_price - ((xrp_price / 100) * 5)
+        print("\nCotação Atual: \n", btc_price, "\n", eth_price, "\n", xrp_price)
     
 def deposito():
     global saldousuario
@@ -167,10 +266,14 @@ def deposito():
         print("\nSenha incorreta!")
 
 
-#----------------------LISTAS------------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------VARIÁVEIS------------------------------------------------------------------------------------------------------------------------------------------------
 cadastros = {
     '53406698824':('kaique','123456',200,[],1,1,1)
     }
+extrato = []
+btc_price = 402484.10
+xrp_price = 2.95
+eth_price = 14070.10
 
 
 #----------------------MAIN-----------------------------------------------------------------------------------------------------------------------------------------------------
