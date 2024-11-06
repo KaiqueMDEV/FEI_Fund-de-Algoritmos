@@ -137,8 +137,13 @@ def saque():
         print("\nSenha incorreta!")
     
 def comprarCripto():
-    print("\nCotação Atual: \n", btc_price, "\n", eth_price, "\n", xrp_price, "\nDeseja Continuar?")
+    global etherumusuario
+    global rippleusuario
+    data_hora_atual = datetime.now()
+    data_hora_formatada = data_hora_atual.strftime("%d/%m/%Y %H:%M:%S")
+    print("\nCotação Atual: \n", "\nBTC: ", btc_price, "\n", "ETH: ", eth_price, "\n","XRP: ", xrp_price)
     while True:
+        print("\nDeseja Continuar?")
         print("\n1. Sim \n2. Não\n")
         resultado = acao()
         if resultado == 1:
@@ -147,31 +152,41 @@ def comprarCripto():
             resultado = acao()
             if resultado == 1:
                 global bitcoinusuario
-                valor = float(input("\nQuanto deseja comprar? (em R$): \n"))
+                valor = float(input("\nQuanto deseja comprar? R$: "))
                 valortaxado = valor + ((valor / 100)*2)
                 if valortaxado <= saldousuario:
                     saldousuario = saldousuario - valortaxado
                     bitcoinusuario = bitcoinusuario + (valor / btc_price)
+                    valorfinal_str = "{:.2f}".format(valortaxado)
+                    extrato = (str(data_hora_formatada) + ' - ' + valorfinal_str + " BRL" + " CT: " + str(btc_price) + "     TX: 0.02 BRL: " + str(saldousuario) + "BTC: " + str(bitcoinusuario))
+                    cadastros[userlogin][3].append(extrato)
+                    cadastros[userlogin] = (cadastros[userlogin][0], cadastros[userlogin][1], saldousuario, cadastros[userlogin][3], bitcoinusuario, etherumusuario, rippleusuario)
                     break
                 else:
                     print("\nSaldo Insuficiente.")
             elif resultado ==2:
-                global etherumusuario
-                valor = float(input("\nQuanto deseja comprar? (em R$): \n"))
+                valor = float(input("\nQuanto deseja comprar? R$: "))
                 valortaxado = valor + ((valor / 100)*1)
                 if valortaxado <= saldousuario:
                     saldousuario = saldousuario - valortaxado
                     etherumusuario = etherumusuario + (valor / eth_price)
+                    valorfinal_str = "{:.2f}".format(valortaxado)
+                    extrato = (str(data_hora_formatada) + ' - ' + valorfinal_str + " BRL" + " CT: " + str(eth_price) + "     TX: 0.02 BRL: " + str(saldousuario) + " ETH: " + str(etherumusuario))
+                    cadastros[userlogin][3].append(extrato)
+                    cadastros[userlogin] = (cadastros[userlogin][0], cadastros[userlogin][1], saldousuario, cadastros[userlogin][3], bitcoinusuario, etherumusuario, rippleusuario)
                     break
                 else:
                     print("Saldo Insuficiente.")
             elif resultado ==3:
-                global rippleusuario
-                valor = float(input("\nQuanto deseja comprar? (em R$): \n"))
+                valor = float(input("\nQuanto deseja comprar? R$: "))
                 valortaxado = valor + ((valor / 100)*1)
                 if valortaxado <= saldousuario:
                     saldousuario = saldousuario - valortaxado
                     rippleusuario = rippleusuario + (valor / xrp_price)
+                    valorfinal_str = "{:.2f}".format(valortaxado)
+                    extrato = (str(data_hora_formatada) + ' - ' + valorfinal_str + " BRL" + " CT: " + str(xrp_price) + "     TX: 0.02 BRL: " + str(saldousuario) + " XRP: " + str(rippleusuario))
+                    cadastros[userlogin][3].append(extrato)
+                    cadastros[userlogin] = (cadastros[userlogin][0], cadastros[userlogin][1], saldousuario, cadastros[userlogin][3], bitcoinusuario, etherumusuario, rippleusuario)
                     break
                 else:
                     print("\nSaldo Insuficiente.")
@@ -184,8 +199,14 @@ def comprarCripto():
     
     
 def venderCripto():
-    print("\nCotação Atual: \n", btc_price, "\n", eth_price, "\n", xrp_price, "\nDeseja Continuar?")
+    global etherumusuario
+    global bitcoinusuario
+    global rippleusuario
+    data_hora_atual = datetime.now()
+    data_hora_formatada = data_hora_atual.strftime("%d/%m/%Y %H:%M:%S")
+    print("\nCotação Atual: \n", "\nBTC: ", btc_price, "\n", "ETH: ", eth_price, "\n","XRP: ", xrp_price)
     while True:
+        print("\nDeseja Continuar?")
         print("\n1. Sim \n2. Não\n")
         resultado = acao()
         if resultado == 1:
@@ -196,31 +217,46 @@ def venderCripto():
                 global bitcoinusuario
                 valor = float(input("\nQuanto deseja vender? (em BTC): \n"))
                 if valor <= bitcoinusuario:
-                    valortaxado = valor - (((valor * btc_price) / 100) * 3) 
+                    valortaxado = ((valor * btc_price) / 100) * 3
+                    valorfinal = ((valor * btc_price) - valortaxado)
                     bitcoinusuario = bitcoinusuario - valor
-                    saldousuario = valortaxado
+                    saldousuario = saldousuario + valorfinal
+                    valorfinal_str = "{:.2f}".format(valorfinal)
+                    extrato = (str(data_hora_formatada) + ' + ' + valorfinal_str + " BRL" + " CT: " + str(btc_price) + "     TX: 0.03 BRL: " + str(saldousuario) + " BTC: " + str(bitcoinusuario))
+                    cadastros[userlogin][3].append(extrato)
+                    cadastros[userlogin] = (cadastros[userlogin][0], cadastros[userlogin][1], saldousuario, cadastros[userlogin][3], bitcoinusuario, etherumusuario, rippleusuario)
                     break
                 else:
                     print("\nSaldo Insuficiente.")
             elif resultado ==2:
-                global etherumusuario
-                valor = float(input("\nQuanto deseja vender? (em BTC): \n"))
-                if valor <= bitcoinusuario:
-                    valortaxado = valor - (((valor * btc_price) / 100) * 3) 
-                    etherumusuario = bitcoinusuario - valor
-                    saldousuario = valortaxado
-                else:
-                    print("Saldo Insuficiente.")
-            elif resultado ==3:
-                global rippleusuario
-                valor = float(input("\nQuanto deseja comprar? (em R$): \n"))
-                valortaxado = valor + ((valor / 100)*1)
-                if valortaxado <= saldousuario:
-                    saldousuario = saldousuario - valortaxado
-                    rippleusuario = rippleusuario + (valor / xrp_price)
+                valor = float(input("\nQuanto deseja vender? (em ETH): \n"))
+                if valor <= etherumusuario:
+                    valortaxado = ((valor * eth_price) / 100) * 2
+                    valorfinal = ((valor * eth_price) - valortaxado)
+                    etherumusuario = etherumusuario - valor
+                    saldousuario = saldousuario + valorfinal
+                    valorfinal_str = "{:.2f}".format(valorfinal)
+                    extrato = (str(data_hora_formatada) + ' + ' + valorfinal_str + " BRL" + " CT: " + str(eth_price) + "    TX: 0.02 BRL: " + str(saldousuario) + " ETH: " + str(etherumusuario))
+                    cadastros[userlogin][3].append(extrato)
+                    cadastros[userlogin] = (cadastros[userlogin][0], cadastros[userlogin][1], saldousuario, cadastros[userlogin][3], bitcoinusuario, etherumusuario, rippleusuario)
                     break
                 else:
                     print("\nSaldo Insuficiente.")
+            elif resultado ==3:
+                valor = float(input("\nQuanto deseja vender? (em XRP): \n"))
+                if valor <= rippleusuario:
+                    valortaxado = ((valor * xrp_price) / 100) * 2
+                    valorfinal = ((valor * xrp_price) - valortaxado)
+                    rippleusuario = rippleusuario - valor
+                    saldousuario = saldousuario + valorfinal
+                    valorfinal_str = "{:.2f}".format(valorfinal)
+                    extrato = (str(data_hora_formatada) + ' + ' + valorfinal_str + " BRL" + " CT: " + str(xrp_price) + "    TX: 0.01 BRL: " + str(saldousuario) + " XRP: " + str(rippleusuario))
+                    cadastros[userlogin][3].append(extrato)
+                    cadastros[userlogin] = (cadastros[userlogin][0], cadastros[userlogin][1], saldousuario, cadastros[userlogin][3], bitcoinusuario, etherumusuario, rippleusuario)
+                    break
+                else:
+                    print("\nSaldo Insuficiente.")
+                
             elif resultado ==4:
                 break
         elif resultado == 2:
